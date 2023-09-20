@@ -4,6 +4,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+record CityRecord(int id, int year, String city, int population) {
+    public String toString() {
+        return "id: " + id +
+                ", year: " + year +
+                ", city: " + city +
+                ", population: " + population;
+    }
+}
+
 public class CityCSVProcessor {
 
     public void readAndProcess(File file) {
@@ -23,7 +32,9 @@ public class CityCSVProcessor {
                 String city = convertToString(rawValues[2]);
                 int population = convertToInt(rawValues[3]);
 
-                System.out.println("id: " + id + ", year: " + year + ", city: " + city + ", population: " + population);
+                CityRecord record = new CityRecord(id, year, city, population);
+
+                System.out.println(record);
 
                 //TODO: Extend the program to process entries!
             }
