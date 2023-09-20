@@ -3,6 +3,9 @@ package edu.sdse.csvprocessor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 record CityRecord(int id, int year, String city, int population) {
     public String toString() {
@@ -23,6 +26,9 @@ public class CityCSVProcessor {
 
             String line;
 
+            ArrayList<CityRecord> allRecords = new ArrayList<>();
+            HashMap<String, ArrayList<CityRecord>> recordsByCity = new HashMap<>();
+
             while ((line = br.readLine()) != null) {
                 // Parse each line
                 String[] rawValues = line.split(",");
@@ -34,9 +40,29 @@ public class CityCSVProcessor {
 
                 CityRecord record = new CityRecord(id, year, city, population);
 
-                System.out.println(record);
-
-                //TODO: Extend the program to process entries!
+                allRecords.add(record);
+                if (!recordsByCity.containsKey(city)) {
+                    recordsByCity.put(city, new ArrayList<>());
+                }
+                recordsByCity.get(city).add(record);
+            }
+            for (Entry<String, ArrayList<CityRecord>> entry : recordsByCity.entrySet()) {
+                String city = entry.getKey();
+                ArrayList<CityRecord> recordsOfCity = entry.getValue();
+                int totalPopulation = 0;
+                int minYear = 100000;
+                int maxYear = 0;
+                for (CityRecord record : recordsOfCity) {
+                    totalPopulation += record.population();
+                    if (record.year() < minYear) {
+                        minYear = record.year();
+                    }
+                    if (record.year() > maxYear) {
+                        maxYear = record.year();
+                    }
+                }
+                int averagePopulation = totalPopulation / recordsOfCity.size();
+                System.out.println("Average population of " + city + " (" + minYear + "-" + maxYear + "): " + averagePopulation);
             }
         } catch (Exception e) {
             System.err.println("An error occurred:");
